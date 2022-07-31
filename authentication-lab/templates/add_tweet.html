@@ -7,5 +7,10 @@
 <body>
     Great Job!
     <a href='/logout'> signout </a>
+    <p> <a href='/add_tweet'>Add</a></p>
+    {% for tweet in tweets %}
+    <h1> {{tweets[tweet]['title']}}</h1>
+    <p> {{tweets[tweet]['text']}} </p>
+    {% endfor %}
 </body>
 </html>

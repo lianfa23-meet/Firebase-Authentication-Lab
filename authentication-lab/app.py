@@ -11,13 +11,13 @@ firebaseConfig = {
   'messagingSenderId': "206261278642",
   'appId': "1:206261278642:web:fced1ba71bfbb2df54b6ab",
   'measurementId': "G-L2HQFSQ76Q",
-  "databaseURL": ""
+  "databaseURL": "https://fir-lab1-efb11-default-rtdb.europe-west1.firebasedatabase.app/"
 
 }
 
 firebase = pyrebase.initialize_app(firebaseConfig)
 auth = firebase.auth()
-
+db = firebase.database()
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config['SECRET_KEY'] = 'super-secret-key'
@@ -29,13 +29,16 @@ def signin():
     if request.method == 'POST':
         email = request.form['email']
         pwd = request.form['password']
+        bio = request.form['bio']
+        name = request.form['fullname']
+        username = request.form['username']
+        user = {"bio":bio, "name":name, 'username':username} 
         try:
             login_session['user'] = auth.sign_in_with_email_and_password(email, pwd)
+            db.child('Users').child(login_session['user']['localId']).set(user)
             return render_template('add_tweet.html')
         except:
             error = 'Authentication failed'
-            print(error)
-            print(login_session['user'])
             return render_template('signin.html')
     else:
         return render_template("signin.html")
@@ -66,7 +69,22 @@ def logout():
 
 @app.route('/add_tweet', methods=['GET', 'POST'])
 def add_tweet():
-    return render_template("add_tweet.html")
+    if request.method=='POST':
+        title = request.form['title']
+        text = request.form['text']
+        tweet = {'title': title, 'text': text}
+        try:
+            db.child('Tweets').push(tweet)
+            tweets = db.child('Tweets').get().val()
+            return render_template("add_tweet.html", tweets=tweets)
+        except:
+            print('error')
+    else:
+        try:
+            tweets = db.child('Tweets').get().val()
+            return render_template("add_tweet.html", tweets=tweets)
+        except:
+            return render_template("add_tweet.html")
 
 
 if __name__ == '__main__':
