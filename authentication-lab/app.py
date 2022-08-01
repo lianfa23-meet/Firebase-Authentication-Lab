@@ -79,7 +79,6 @@ def add_tweet():
             return render_template("add_tweet.html", tweets=tweets)
         except:
             print('error')
-            return 
     else:
         try:
             tweets = db.child('Tweets').get().val()
