@@ -29,13 +29,9 @@ def signin():
     if request.method == 'POST':
         email = request.form['email']
         pwd = request.form['password']
-        bio = request.form['bio']
-        name = request.form['fullname']
-        username = request.form['username']
-        user = {"bio":bio, "name":name, 'username':username} 
+        
         try:
             login_session['user'] = auth.sign_in_with_email_and_password(email, pwd)
-            db.child('Users').child(login_session['user']['localId']).set(user)
             return render_template('add_tweet.html')
         except:
             error = 'Authentication failed'
@@ -49,9 +45,14 @@ def signup():
     if request.method == 'POST':
         email = request.form['email']
         pwd = request.form['password']
-        
+        bio = request.form['bio']
+        name = request.form['fullname']
+        username = request.form['username']
+        user = {"bio":bio, "name":name, 'username':username} 
         try:
             login_session['user'] = auth.create_user_with_email_and_password(email, pwd)
+            db.child('Users').child(login_session['user']['localId']).set(user)
+
 
             return render_template('signin.html')
         except:

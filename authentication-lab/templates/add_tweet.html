@@ -7,7 +7,11 @@
 <body>
     Great Job!
     <a href='/logout'> signout </a>
-    <p> <a href='/add_tweet'>Add</a></p>
+    <form method='post' action='/add_tweet'>
+    <br>
+    <input type='text' name='title' placeholder='title'><br>
+    <input type='text' name='text' placeholder='text'>
+    <p> <button type='submit'>Add Tweet</button></p></form>
     {% for tweet in tweets %}
     <h1> {{tweets[tweet]['title']}}</h1>
     <p> {{tweets[tweet]['text']}} </p>
