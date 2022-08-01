@@ -52,8 +52,6 @@ def signup():
         try:
             login_session['user'] = auth.create_user_with_email_and_password(email, pwd)
             db.child('Users').child(login_session['user']['localId']).set(user)
-
-
             return render_template('signin.html')
         except:
             error = 'Authentication failed'
@@ -73,13 +71,15 @@ def add_tweet():
     if request.method=='POST':
         title = request.form['title']
         text = request.form['text']
-        tweet = {'title': title, 'text': text}
+        print(login_session)
+        tweet = {'title': title, 'text': text, 'username': (db.child('Users').child(login_session['user']['localId']).get().val())['username']}
         try:
             db.child('Tweets').push(tweet)
             tweets = db.child('Tweets').get().val()
             return render_template("add_tweet.html", tweets=tweets)
         except:
             print('error')
+            return 
     else:
         try:
             tweets = db.child('Tweets').get().val()
